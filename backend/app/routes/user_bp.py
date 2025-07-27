@@ -5,16 +5,11 @@ from app.models import User
 from datetime import timedelta
 
 
-admin_bp = Blueprint('admin', __name__)
-
-# RUTA TEST de http://127.0.0.1:5000/admin_bp que muestra "Hola mundo":
-@admin_bp.route('/', methods=['GET'])
-def show_hello_world():
-     return "Hola mundo",200
+user_bp = Blueprint('user', __name__)
 
 
 # RUTA CREAR USUARIO
-@admin_bp.route('/users', methods=['POST'])
+@user_bp.route('/signup', methods=['POST'])
 def create_user():
     try:
         email = request.json.get('email')
@@ -22,11 +17,11 @@ def create_user():
         name = request.json.get('name')
 
         if not email or not password or not name:
-            return jsonify({'error': 'Email, password and Name are required.'}), 400
+            return jsonify({'error': 'Email, password y nombre son necesarios'}), 400
 
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
-            return jsonify({'error': 'Email already exists.'}), 409
+            return jsonify({'error': 'Este email ya esta en uso.'}), 409
 
         password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
 
@@ -36,20 +31,14 @@ def create_user():
         db.session.add(new_user)
         db.session.commit()
 
-        good_to_share_user = {
-            'id': new_user.id,
-            'name':new_user.name,
-            'email':new_user.email
-        }
-
-        return jsonify({'message': 'User created successfully.','user_created':good_to_share_user}), 201
+        return jsonify({'message': 'User created successfully.','user_created':new_user.serialize()}), 201
 
     except Exception as e:
         return jsonify({'error': 'Error in user creation: ' + str(e)}), 500
 
 
 #RUTA LOG-IN ( CON TOKEN DE RESPUESTA )
-@admin_bp.route('/login', methods=['POST'])
+@user_bp.route('/login', methods=['POST'])
 def get_token():
     try:
 
@@ -78,7 +67,7 @@ def get_token():
         return {"Error":"El email proporcionado no corresponde a ninguno registrado: " + str(e)}, 500
     
     
-@admin_bp.route('/users')
+@user_bp.route('/users')
 @jwt_required()
 def show_users():
     current_user_id = get_jwt_identity()

@@ -10,7 +10,7 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(String(60), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(60), nullable=False)
     name: Mapped[str] = mapped_column(String(60), nullable=False)
-    phone: Mapped[str] = mapped_column(String(40), nullable=False)
+    phone: Mapped[str] = mapped_column(String(40), nullable=True)
     address: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     role: Mapped[str] = mapped_column(String(10), nullable=False, default="user")
     last_login: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now(timezone.utc))
