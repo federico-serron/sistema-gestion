@@ -46,9 +46,10 @@ def create_app():
         os.makedirs(os.path.dirname(db_path))
 
     # Registramos blueprints
-    from app.routes.admin_bp import admin_bp
+    from app.routes.user_bp import user_bp
     from app.routes.public_bp import public_bp
-    app.register_blueprint(admin_bp, url_prefix='/admin')
+    
+    app.register_blueprint(user_bp, url_prefix='/user')
     app.register_blueprint(public_bp, url_prefix='/public')
 
     return app
