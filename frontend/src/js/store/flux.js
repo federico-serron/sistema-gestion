@@ -59,7 +59,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 
 					const data = await response.json();
-					console.log("Usuario registrado:", data);
 					return { success: true, data: data };
 
 				} catch (error) {
