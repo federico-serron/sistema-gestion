@@ -57,8 +57,11 @@ def get_token():
             expires = timedelta(minutes=30)
 
             user_id = login_user.id
-            access_token = create_access_token(identity=str(user_id), expires_delta=expires)
-            return jsonify({ 'access_token':access_token}), 200
+            role = login_user.role
+            additional_claims = { "role": role}
+
+            access_token = create_access_token(identity=str(user_id), additional_claims=additional_claims, expires_delta=expires)
+            return jsonify({ 'access_token':access_token, 'role': role}), 200
 
         else:
             return {"Error":"Contraseña  incorrecta"}
@@ -83,3 +86,6 @@ def show_users():
         return jsonify(user_list), 200
     else:
         return {"Error": "Token inválido o no proporcionado"}, 401
+    
+
+
