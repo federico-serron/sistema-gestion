@@ -54,7 +54,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					if (!response.ok) {
 						const errorData = await response.json();
-						console.error("Error en el registro:", errorData);
 						return { success: false, error: errorData.error || "Registro fallido" };
 					}
 
@@ -62,7 +61,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return { success: true, data: data };
 
 				} catch (error) {
-					console.error("Error en la petición de registro:", error);
 					return { success: false, error: "Ocurrió un error inesperado." };
 				}
 			}
