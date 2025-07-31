@@ -3,14 +3,14 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			personas: ["Pedro","Maria"],
+			personas: ["Pedro", "Maria"],
 			demoMsg: "",
 		},
 		actions: {
 
 			exampleFunction: () => {
-                    console.log(backendUrl)
-                    return
+				console.log(backendUrl)
+				return
 			},
 
 			demoFunction: async () => {
@@ -19,7 +19,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				try {
 
-					const response = await fetch(urlAboutPublic, {method:'GET'});
+					const response = await fetch(urlAboutPublic, { method: 'GET' });
 
 					if (!response.ok) {
 						console.log(response.statusText)
@@ -27,7 +27,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 
 					const data = await response.json();
-					setStore({...store,  demoMsg: data.msg })
+					setStore({ ...store, demoMsg: data.msg })
 
 					return data.msg
 
@@ -35,7 +35,36 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error('Error fetching data:', error);
 					return false
 				}
-		},
+			},
+
+			register: async (email, password, name) => {
+				try {
+					const response = await fetch(`${backendUrl}/user/signup`,
+						{
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json"
+							},
+							body: JSON.stringify({
+								email,
+								password,
+								name
+							})
+						});
+
+					if (!response.ok) {
+						const errorData = await response.json();
+						return { success: false, error: errorData.error || "Registro fallido" };
+					}
+
+					const data = await response.json();
+					return { success: true, data: data };
+
+				} catch (error) {
+					return { success: false, error: "Ocurrió un error inesperado." };
+				}
+			}
+
 		}
 	};
 };

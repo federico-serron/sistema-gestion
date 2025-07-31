@@ -48,7 +48,10 @@ def get_token():
         if not email or not password:
             return jsonify({'error': 'Email and password are required.'}), 400
         
-        login_user = User.query.filter_by(email=request.json['email']).one()
+        login_user = User.query.filter_by(email=email).first()
+
+        if not login_user:
+            return jsonify({'error': 'El email proporcionado no corresponde a ninguno registrado'}), 404
 
         password_from_db = login_user.password
         true_o_false = bcrypt.check_password_hash(password_from_db, password)
@@ -57,11 +60,14 @@ def get_token():
             expires = timedelta(minutes=30)
 
             user_id = login_user.id
-            access_token = create_access_token(identity=str(user_id), expires_delta=expires)
-            return jsonify({ 'access_token':access_token}), 200
+            role = login_user.role
+            additional_claims = { "role": role}
+
+            access_token = create_access_token(identity=str(user_id), additional_claims=additional_claims, expires_delta=expires)
+            return jsonify({ 'access_token':access_token, 'role': role}), 200
 
         else:
-            return {"Error":"Contraseña  incorrecta"}
+            return {"Error":"Contraseña  incorrecta"}, 401
     
     except Exception as e:
         return {"Error":"El email proporcionado no corresponde a ninguno registrado: " + str(e)}, 500
@@ -83,3 +89,14 @@ def show_users():
         return jsonify(user_list), 200
     else:
         return {"Error": "Token inválido o no proporcionado"}, 401
+    
+
+
+
+
+
+
+                
+      
+                
+  
