@@ -9,7 +9,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		actions: {
 
 			exampleFunction: () => {
-				console.log(backendUrl)
+				console.log("esta es la backend url", backendUrl)
 				return
 			},
 
@@ -63,7 +63,35 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					return { success: false, error: "Ocurrió un error inesperado." };
 				}
-			}
+			},
+
+			login: async (email, password) => {
+				try {
+					const response = await fetch(`${backendUrl}/user/login`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							email,
+							password
+						})
+					})
+					if (!response.ok) {
+						const errorData = await response.json();
+						return { success: false, error: errorData.error || "Login fallido" };
+					}
+					const data = await response.json();
+					console.log("esta es la data", data)
+					if (data.access_token) {
+						localStorage.setItem("token", data.access_token);
+					}
+					return { success: true, data: data };
+
+				} catch (error) {
+					return { success: false, error: "ocurrió un error inesperado" };
+				}
+			},
 
 		}
 	};
