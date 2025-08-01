@@ -9,7 +9,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		actions: {
 
 			exampleFunction: () => {
-				console.log("esta es la backend url", backendUrl)
+				console.log(backendUrl)
 				return
 			},
 
